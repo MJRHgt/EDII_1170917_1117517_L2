@@ -85,7 +85,7 @@ namespace Lab01.Class
             Value NewVal = new Value(Newkey, NewValue, newLine);
 
             //if (!KeyIsAlreadyOnTree(Newkey, Root)) this.Insert(this.Root, NewVal, null); 
-        }
+        } //end method public insert
 
         private void Insert(Node SubTreeRoot, Value NewVal, Node nodoFather)
         {
@@ -112,8 +112,8 @@ namespace Lab01.Class
             }
             else this.Insert(WayElementPointer.Value, NewVal, SubTreeRoot);//Searches in a recursive way, the leaf to insert
 
-           // if (SubTreeRoot.IsOverLoaded()) this.Balance(SubTreeRoot, nodoFather);
-        }
+            if (SubTreeRoot.IsOverLoaded()) this.Balance(SubTreeRoot, nodoFather);
+        } // end method insert
 
         private void SearchSpace(ref LinkedListNode<Value> TempListNode, ref LinkedListNode<Node> TemListWay, Value NewVal)
         {
@@ -125,8 +125,187 @@ namespace Lab01.Class
                 if (TemListWay != null)
                     if (TemListWay.Next != null) TemListWay = TemListWay.Next;
             }
-        }
+        } //end method search space
 
+        private void Balance(Node OverLoadedNode, Node Father)
+        {
+            if (Father == null)
+            {
+                Father = new Node(Grade);
+                Root = Father;
+            }
+
+            LinkedList<Value> FirstHalf = new LinkedList<Value>();
+            LinkedListNode<Value> MiddleValue = new LinkedListNode<Value>(null);
+            LinkedList<Value> SecondHalf = new LinkedList<Value>();
+
+            LinkedListNode<Value> NodeElementPointer = Father.Entries.First;
+            LinkedListNode<Node> WayElementPointer = Father.Sons.First;
+
+
+            LinkedList<Node> FirstHalfOfNodes = new LinkedList<Node>();
+            LinkedList<Node> SecondHalfOfNodes = new LinkedList<Node>();
+
+            this.DivideNode(ref FirstHalf, ref MiddleValue, ref SecondHalf, ref OverLoadedNode);
+            if (Father.Entries.First != null)
+            {
+                this.SearchSpace(ref NodeElementPointer, ref WayElementPointer, MiddleValue.Value);
+                if (NodeElementPointer.Value.key.CompareTo(MiddleValue.Value.key) > 0) Father.Entries.AddBefore(NodeElementPointer, MiddleValue.Value);
+                else Father.Entries.AddAfter(NodeElementPointer, MiddleValue.Value);
+                Father.Sons.AddAfter(WayElementPointer, new Node(Grade) { Entries = FirstHalf /, Sons = FirstHalfOfNodes /});
+                Father.Sons.AddAfter(WayElementPointer.Next, new Node(Grade) { Entries = SecondHalf /, Sons = SecondHalfOfNodes /});
+
+                LinkedList<Node> TempList = new LinkedList<Node>();
+                //This cicle is to delete the empty overloaded node from Sons list references
+                foreach (var item in Father.Sons)
+                {
+                    if (item != OverLoadedNode)
+                    {
+                        TempList.AddLast(item);
+                    }
+                }
+                Father.Sons = TempList;
+
+                if (OverLoadedNode.Sons.Count == Grade + 1)
+                {
+                    SplitSonsForRecursiveInsertion(OverLoadedNode, ref FirstHalfOfNodes, ref SecondHalfOfNodes);
+                    WayElementPointer.Next.Value.Sons = FirstHalfOfNodes;
+                    WayElementPointer.Next.Next.Value.Sons = SecondHalfOfNodes;
+                }
+            }
+            else
+            {
+                Height++;
+                Father.Entries.AddFirst(MiddleValue.Value);
+                Father.Sons.AddLast(new Node(Grade) { Entries = FirstHalf });
+                Father.Sons.AddLast(new Node(Grade) { Entries = SecondHalf });
+                SplitSons(ref OverLoadedNode, ref Father);
+            }
+        } //End method Balance
+
+        private void DivideNode(ref LinkedList<Value> FirstHalf, ref LinkedListNode<Value> MiddleValue, ref LinkedList<Value> SecondHalf, ref Node OverLoadedNode)
+        {
+            //depends on the degree to do the division of the node
+            if (IsGradePair())
+            {
+                for (int i = 0; i < ((Grade - 1) / 2); i++)
+                {
+                    LinkedListNode<Value> TempNode = OverLoadedNode.Entries.First;
+                    OverLoadedNode.Entries.RemoveFirst();
+                    FirstHalf.AddLast(TempNode);
+                }
+
+                MiddleValue.Value = OverLoadedNode.Entries.First.Value;
+                OverLoadedNode.Entries.RemoveFirst();
+
+                for (int i = 0; i < (Grade / 2); i++)
+                {
+                    LinkedListNode<Value> TempNode = OverLoadedNode.Entries.First;
+                    OverLoadedNode.Entries.RemoveFirst();
+                    SecondHalf.AddLast(TempNode);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < (Grade / 2); i++)
+                {
+                    LinkedListNode<Value> TempNode = OverLoadedNode.Entries.First;
+                    OverLoadedNode.Entries.RemoveFirst();
+                    FirstHalf.AddLast(TempNode);
+                }
+
+                MiddleValue.Value = OverLoadedNode.Entries.First.Value;
+                OverLoadedNode.Entries.RemoveFirst();
+
+                for (int i = 0; i < (Grade / 2); i++)
+                {
+                    LinkedListNode<Value> TempNode = OverLoadedNode.Entries.First;
+                    OverLoadedNode.Entries.RemoveFirst();
+                    SecondHalf.AddLast(TempNode);
+                }
+            }
+        }//end method divide node
+
+        //Method for split the sons 
+        private void SplitSons(ref Node OverLoadedNode, ref Node Father)
+        {
+            if (OverLoadedNode.Sons.Count > 0)//If overloaded node have sons
+            {
+                var TempFatherSon = Father.Sons.First;
+                if (IsGradePair())
+                {
+                    for (int i = 0; i < (Grade / 2); i++)
+                    {
+                        var TempSon = OverLoadedNode.Sons.First;
+                        OverLoadedNode.Sons.RemoveFirst();
+                        TempFatherSon.Value.Sons.AddLast(TempSon);
+                    }
+                    TempFatherSon = TempFatherSon.Next;
+                    for (int i = 0; i < ((Grade + 2) / 2); i++)
+                    {
+                        var TempSon = OverLoadedNode.Sons.First;
+                        OverLoadedNode.Sons.RemoveFirst();
+                        TempFatherSon.Value.Sons.AddLast(TempSon);
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < 2; i++)
+                    {
+                        for (int j = 0; j < (Grade / 2) + 1; j++)
+                        {
+                            var TempSon = OverLoadedNode.Sons.First;
+                            OverLoadedNode.Sons.RemoveFirst();
+                            TempFatherSon.Value.Sons.AddLast(TempSon);
+                        }
+                        TempFatherSon = TempFatherSon.Next;
+                    }
+                }
+            } //else does nothing
+
+        }//end method split sons
+        private void SplitSonsForRecursiveInsertion(Node OverLoadedNode, ref LinkedList<Node> FirstHalfofSons, ref LinkedList<Node> SecondHalfofSons)
+        {
+            //depend the grade tree
+            if (IsGradePair())
+            {
+                for (int i = 1; i <= (Grade / 2); i++)
+                {
+                    Node tempNode = OverLoadedNode.Sons.First.Value;
+                    OverLoadedNode.Sons.RemoveFirst();
+                    FirstHalfofSons.AddLast(tempNode);
+                }
+
+                for (int i = 1; i <= ((Grade + 2) / 2); i++)
+                {
+                    Node tempNode = OverLoadedNode.Sons.First.Value;
+                    OverLoadedNode.Sons.RemoveFirst();
+                    SecondHalfofSons.AddLast(tempNode);
+                }
+            }
+            else
+            {
+                for (int i = 1; i <= ((Grade + 1) / 2); i++)
+                {
+                    Node tempNode = OverLoadedNode.Sons.First.Value;
+                    OverLoadedNode.Sons.RemoveFirst();
+                    FirstHalfofSons.AddLast(tempNode);
+                }
+
+                for (int i = 1; i <= ((Grade + 1) / 2); i++)
+                {
+                    Node tempNode = OverLoadedNode.Sons.First.Value;
+                    OverLoadedNode.Sons.RemoveFirst();
+                    SecondHalfofSons.AddLast(tempNode);
+                }
+            }
+        }//end method split sons for recursive insertion
+
+        // method to know if the grade of the tree is pair
+        private bool IsGradePair()
+        {
+            return Grade % 2 == 0;
+        }//end method grade pair the tree
 
 
     } //end class BTree
