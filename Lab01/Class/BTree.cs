@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 
 namespace Lab01.Class
 {
-    class BTree<Tkey, T> where Tkey : IComparable<Tkey>
+    class BTree<Tkey, T> where Tkey : IComparable<Tkey> //specific type comparison to sort your instances
     {
 
         //-------------------------CLASS KEY AND VALUE TO INSERT----------------------
-        private class Value : IEquatable<Value>
+        private class Value : IEquatable<Value> //equality of instances
         {
             public Tkey key { get; set; }
             public T Value_Val { get; set; }
@@ -37,8 +37,8 @@ namespace Lab01.Class
         private class Node
         {
             int Grade; //Know grade the tree
-            public LinkedList<Node> Sons { get; set; } 
-            public LinkedList<Value> Entries { get; set; }
+            public LinkedList<Node> Sons { get; set; } //list the sons
+            public LinkedList<Value> Entries { get; set; } // list the way*
 
             //Method builder
             public Node(int grade)
@@ -48,8 +48,86 @@ namespace Lab01.Class
                 Grade = grade;
             }
 
+            // -------------------------------- NODE FUNCTIONS ----------------------------
+
+            //method ask if the node is leaf
+            public bool IsLeaf() 
+            {
+                return Sons.Count == 0; //true if you don't have children
+            }
+
+            //method that asks if the node is overloaded
+            public bool IsOverLoaded()
+            {
+                return Entries.Count == (Grade); //true if the entries are equal to the grade of the tree
+            }
 
         } // end class Node
+
+
+        //--------------------------- VARIABLE B TREE -----------------------------
+        private Node Root;
+        public int Grade;
+        public int Height;
+
+        //method builder
+        public BTree(int grade)
+        {
+            Grade = grade;
+            Root = new Node(grade);
+            Height = 1;
+        }
+
+
+        // ---------------------------- FUNCTIONS INSERT ----------------------------------
+        public void Insert(Tkey Newkey, T NewValue, int newLine)
+        {
+            Value NewVal = new Value(Newkey, NewValue, newLine);
+
+            //if (!KeyIsAlreadyOnTree(Newkey, Root)) this.Insert(this.Root, NewVal, null); 
+        }
+
+        private void Insert(Node SubTreeRoot, Value NewVal, Node nodoFather)
+        {
+            if (Root.Entries.Count == 0)//If is the first element
+            {
+                Root.Entries.AddLast(NewVal);
+                return;
+            }
+
+
+            LinkedListNode<Value> NodeElementPointer = SubTreeRoot.Entries.First;
+            LinkedListNode<Node> WayElementPointer = SubTreeRoot.Sons.First;
+
+            this.SearchSpace(ref NodeElementPointer, ref WayElementPointer, NewVal);//changes the ref items until find the closest but smaller than new value items
+            if ((WayElementPointer != null) &&
+                (NewVal.key.CompareTo(NodeElementPointer.Value.key) > 0))
+                WayElementPointer = WayElementPointer.Next;//Moves the Way element pointer to the lastone if the element is the biggest and there are sons
+
+            if (SubTreeRoot.IsLeaf())
+            {
+                if (NodeElementPointer.Value.key.CompareTo(NewVal.key) > 0) SubTreeRoot.Entries.AddBefore(NodeElementPointer, NewVal);//Inserts the value in the corresponding Leaf
+                else SubTreeRoot.Entries.AddAfter(NodeElementPointer, NewVal);//Inserts the value in the corresponding Leaf
+
+            }
+            else this.Insert(WayElementPointer.Value, NewVal, SubTreeRoot);//Searches in a recursive way, the leaf to insert
+
+           // if (SubTreeRoot.IsOverLoaded()) this.Balance(SubTreeRoot, nodoFather);
+        }
+
+        private void SearchSpace(ref LinkedListNode<Value> TempListNode, ref LinkedListNode<Node> TemListWay, Value NewVal)
+        {
+            while (TempListNode.Value.key.CompareTo(NewVal.key) <= 0)//While new value be smaller do
+            {
+                if (TempListNode.Next != null) TempListNode = TempListNode.Next;
+                else break;
+
+                if (TemListWay != null)
+                    if (TemListWay.Next != null) TemListWay = TemListWay.Next;
+            }
+        }
+
+
 
     } //end class BTree
 }
