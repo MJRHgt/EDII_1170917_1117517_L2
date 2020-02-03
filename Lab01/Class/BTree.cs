@@ -12,14 +12,14 @@ namespace Lab01.Class
             public Tkey key { get; set; }
             public T Value_Val { get; set; }
 
-            public int line;
+           // public int line;
 
             // method builder
-            public Value(Tkey newKey, T newValue, int newLine)
+            public Value(Tkey newKey, T newValue/*, int newLine*/)
             {
                 key = newKey;
                 Value_Val = newValue;
-                line = newLine;
+                //line = newLine;
             }
 
             // method Equals
@@ -78,9 +78,9 @@ namespace Lab01.Class
 
 
         // ---------------------------- FUNCTIONS INSERT ----------------------------------
-        public void Insert(Tkey Newkey, T NewValue, int newLine)
+        public void Insert(Tkey Newkey, T NewValue/*, int newLine*/)
         {
-            Value NewVal = new Value(Newkey, NewValue, newLine);
+            Value NewVal = new Value(Newkey, NewValue/*, newLine*/);
 
             if (!KeyIsAlreadyOnTree(Newkey, Root)) this.Insert(this.Root, NewVal, null);
         } //end method public insert
