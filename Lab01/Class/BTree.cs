@@ -84,7 +84,7 @@ namespace Lab01.Class
         {
             Value NewVal = new Value(Newkey, NewValue, newLine);
 
-            //if (!KeyIsAlreadyOnTree(Newkey, Root)) this.Insert(this.Root, NewVal, null); 
+            if (!KeyIsAlreadyOnTree(Newkey, Root)) this.Insert(this.Root, NewVal, null); 
         } //end method public insert
 
         private void Insert(Node SubTreeRoot, Value NewVal, Node nodoFather)
@@ -152,8 +152,8 @@ namespace Lab01.Class
                 this.SearchSpace(ref NodeElementPointer, ref WayElementPointer, MiddleValue.Value);
                 if (NodeElementPointer.Value.key.CompareTo(MiddleValue.Value.key) > 0) Father.Entries.AddBefore(NodeElementPointer, MiddleValue.Value);
                 else Father.Entries.AddAfter(NodeElementPointer, MiddleValue.Value);
-                Father.Sons.AddAfter(WayElementPointer, new Node(Grade) { Entries = FirstHalf /, Sons = FirstHalfOfNodes /});
-                Father.Sons.AddAfter(WayElementPointer.Next, new Node(Grade) { Entries = SecondHalf /, Sons = SecondHalfOfNodes /});
+                Father.Sons.AddAfter(WayElementPointer, new Node(Grade) { Entries = FirstHalf /*, Sons = FirstHalfOfNodes */});
+                Father.Sons.AddAfter(WayElementPointer.Next, new Node(Grade) { Entries = SecondHalf /*, Sons = SecondHalfOfNodes */});
 
                 LinkedList<Node> TempList = new LinkedList<Node>();
                 //This cicle is to delete the empty overloaded node from Sons list references
@@ -307,8 +307,34 @@ namespace Lab01.Class
             return Grade % 2 == 0;
         }//end method grade pair the tree
 
+        //---------------------------- Other Function --------------------------------------------
+        private bool KeyIsAlreadyOnTree(Tkey newKey, Node SubTreeRoot)
+        {
+            //var cont
+            int cont = 0;
 
-
+            foreach (var item in SubTreeRoot.Entries)
+            {
+                if (item.key.CompareTo(newKey) == 0) return true;
+                //        "B"           "A"              /*if the new value is smaller*/
+                else if (item.key.CompareTo(newKey) > 0)
+                {
+                    if (SubTreeRoot.Sons.Count > 0)
+                    {
+                        LinkedListNode<Node> NextSearch = SubTreeRoot.Sons.First;
+                        for (int i = 0; i < cont; i++) NextSearch = NextSearch.Next;
+                        return KeyIsAlreadyOnTree(newKey, NextSearch.Value);
+                    }
+                    else return false;
+                }
+                else /*If is bigger*/
+                {
+                    cont++;
+                }
+            }
+            if (SubTreeRoot.Sons.Count > 0) return KeyIsAlreadyOnTree(newKey, SubTreeRoot.Sons.Last.Value);
+            else return false;
+        }//Untested
 
     } //end class BTree
 }
