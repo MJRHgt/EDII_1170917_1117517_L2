@@ -22,9 +22,9 @@ namespace Lab01.Controllers
         [HttpPost]
         public void Post([FromBody]Soda newSoda)
         {
-            BTree<String,Soda> Tree5 = new BTree<String, Soda>(5);
+            BTree<String,Soda> Tree5 = new BTree<String, Soda>(5); //instance class btree
 
-            Tree5.Insert(newSoda.Name,newSoda);
+            Tree5.Insert(newSoda.Name,newSoda); //method insert
 
         }
 
