@@ -25,7 +25,7 @@ namespace Lab01.Controllers
             BTree<String,Soda> Tree5 = new BTree<String, Soda>(5); //instance class btree
 
             Tree5.Insert(newSoda.Name,newSoda); //method insert
-
+            
         }
 
     }
