@@ -15,7 +15,7 @@ namespace Lab01.Controllers
         [HttpGet]
         public IEnumerable<Soda> Get()
         {
-            return ;
+          
         }
 
         [HttpPost]
