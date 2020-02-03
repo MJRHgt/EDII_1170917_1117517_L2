@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Lab01.Class
 {
@@ -51,7 +49,7 @@ namespace Lab01.Class
             // -------------------------------- NODE FUNCTIONS ----------------------------
 
             //method ask if the node is leaf
-            public bool IsLeaf() 
+            public bool IsLeaf()
             {
                 return Sons.Count == 0; //true if you don't have children
             }
@@ -84,7 +82,7 @@ namespace Lab01.Class
         {
             Value NewVal = new Value(Newkey, NewValue, newLine);
 
-            if (!KeyIsAlreadyOnTree(Newkey, Root)) this.Insert(this.Root, NewVal, null); 
+            if (!KeyIsAlreadyOnTree(Newkey, Root)) this.Insert(this.Root, NewVal, null);
         } //end method public insert
 
         private void Insert(Node SubTreeRoot, Value NewVal, Node nodoFather)
