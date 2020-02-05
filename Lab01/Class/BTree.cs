@@ -346,7 +346,7 @@ namespace Lab01.Class
             LinkedListNode<Node> WayPointer = Root.Sons.First;
             LinkedListNode<Value> TempValuePointer = Root.Entries.First;
 
-            if (WayPointer != null) Internal_InOrden(WayPointer.Value, ref LL);//Va hasta la ultima hoja y la recorre
+            if (WayPointer != null) Internal_InOrden(WayPointer.Value, ref LL);// Go to the last sheet and pick it up
             else
             {
                 foreach (var item in Root.Entries) LL.Add(item.Value_Val);
