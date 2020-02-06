@@ -334,5 +334,34 @@ namespace Lab01.Class
             else return false;
         }//Untested
 
+
+        //----Search---------------------------------------------------------------------------------
+        public void InOrden(ref List<T> LL)
+        {
+            Internal_InOrden(Root, ref LL);
+        }//end method InOrden
+
+        private void Internal_InOrden(Node Root, ref List<T> LL)
+        {
+            LinkedListNode<Node> WayPointer = Root.Sons.First;
+            LinkedListNode<Value> TempValuePointer = Root.Entries.First;
+
+            if (WayPointer != null) Internal_InOrden(WayPointer.Value, ref LL);// Go to the last sheet and pick it up
+            else
+            {
+                foreach (var item in Root.Entries) LL.Add(item.Value_Val);
+                return;
+            }
+
+            while (WayPointer.Next != null)
+            {
+                LL.Add(TempValuePointer.Value.Value_Val);
+                TempValuePointer = TempValuePointer.Next;
+                WayPointer = WayPointer.Next;
+                Internal_InOrden(WayPointer.Value, ref LL);
+            }
+        }//end method Internal_InOrden
+
+
     } //end class BTree
 }
