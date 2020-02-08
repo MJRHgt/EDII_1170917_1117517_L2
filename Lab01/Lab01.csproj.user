@@ -4,7 +4,7 @@
     <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup>
-<<<<<<< HEAD
+ HEAD 
     <ActiveDebugProfile>Lab01</ActiveDebugProfile>
 =======
     <ActiveDebugProfile>IIS Express</ActiveDebugProfile>
